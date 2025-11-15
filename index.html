@@ -1,0 +1,263 @@
+<!--
+Kwarta Pilipinas - Frontend (Single HTML file implementing 2 'pages' via hash routing)
+Instructions:
+ - This is a front-end only single-file app (index.html). It contains two views: Home (form) and Confirm (review + Convert Now).
+ - Update the `paypalLink` constant in the <script> near the bottom with your full PayPal payment URL.
+ - Clicking "Convert Now" on the Confirm page redirects instantly to the PayPal link.
+ - Save this file as `index.html` and open in a browser to test.
+-->
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kwarta Pilipinas — Convert to GCash</title>
+  <style>
+    :root{
+      --bg1:#0b63d4; /* deep blue */
+      --bg2:#4aa3ff; /* light blue */
+      --glass: rgba(255,255,255,0.08);
+      --accent: rgba(255,255,255,0.18);
+      --card-radius:18px;
+      --max-width:920px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(74,163,255,0.14), transparent 10%),
+                  radial-gradient(800px 400px at 90% 90%, rgba(11,99,212,0.12), transparent 15%),
+                  linear-gradient(180deg,var(--bg1),var(--bg2));
+      color: #eaf6ff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      display:flex;align-items:center;justify-content:center;padding:32px;
+    }
+    .container{
+      width:100%;max-width:var(--max-width);
+      display:grid;grid-template-columns:1fr 420px;gap:32px;align-items:stretch;
+    }
+
+    /* Left: info / copy */
+    .panel{
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      border-radius: var(--card-radius);
+      padding:28px;
+      backdrop-filter: blur(8px) saturate(120%);
+      border:1px solid var(--accent);
+      box-shadow: 0 8px 30px rgba(4,20,40,0.35);
+    }
+    h1{margin:0 0 12px;font-size:28px}
+    p.lead{margin:0 0 18px;color:rgba(235,245,255,0.9)}
+    ul.features{padding-left:18px;margin:0;color:rgba(235,245,255,0.9)}
+    li{margin:8px 0}
+
+    /* Right: form card */
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      border-radius: 16px;padding:22px;border:1px solid var(--accent);backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(2,10,30,0.35);
+    }
+    label{display:block;font-size:13px;margin-bottom:6px;color:rgba(230,240,255,0.9)}
+    input[type="text"], input[type="tel"], input[type="email"], input[type="number"], textarea{
+      width:100%;padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:inherit;font-size:15px;
+      outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,0.02);
+    }
+    .muted{font-size:13px;color:rgba(230,240,255,0.7);margin-top:6px}
+    .row{display:flex;gap:12px}
+    .row > *{flex:1}
+    .btn{display:inline-block;padding:12px 16px;border-radius:12px;border:none;background:linear-gradient(90deg,rgba(255,255,255,0.12),rgba(255,255,255,0.06));cursor:pointer;font-weight:600}
+    .btn.primary{background:linear-gradient(90deg,#0b63d4,#2b9bff);color:white;border:none}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:inherit}
+    .small{font-size:13px;padding:8px 12px}
+
+    .center{display:flex;align-items:center;justify-content:center}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,#2b9bff,#0b63d4);display:flex;align-items:center;justify-content:center;font-weight:700;color:white}
+    .foot{font-size:13px;color:rgba(230,240,255,0.7);margin-top:12px}
+
+    /* confirm view */
+    .summary{background:linear-gradient(180deg, rgba(255,255,255,0.015), rgba(255,255,255,0.01));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);}
+    .field{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed rgba(255,255,255,0.02)}
+    .field:last-child{border-bottom:none}
+
+    @media (max-width:900px){
+      .container{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="panel">
+      <div class="brand">
+        <div class="logo">KP</div>
+        <div>
+          <h1>Kwarta Pilipinas</h1>
+          <div class="muted">Fast, secure conversion from PayPal &amp; digital balances to GCash.</div>
+        </div>
+      </div>
+
+      <p class="lead">Kwarta Pilipinas is a fast and convenient digital exchange service designed to help Filipinos convert available balances into GCash quickly and securely.</p>
+
+      <h3>How it works</h3>
+      <ul class="features">
+        <li>Enter your details</li>
+        <li>Click "Convert Now" to proceed to PayPal</li>
+        <li>Complete the payment on PayPal</li>
+        <li>We release GCash to your number after verification</li>
+      </ul>
+
+      <h3 style="margin-top:18px">Why choose us</h3>
+      <ul class="features">
+        <li>Fast processing</li>
+        <li>Easy to use — no apps required</li>
+        <li>PayPal-secured payment handling</li>
+      </ul>
+
+      <p class="foot">Disclaimer: Kwarta Pilipinas is not affiliated with GCash, Mynt, PayPal, or any financial institution.</p>
+    </div>
+
+    <div class="card" id="app">
+      <!-- HOME VIEW -->
+      <div id="view-home">
+        <h2 style="margin-top:0">Convert to GCash</h2>
+        <p class="muted">Enter your details and choose the amount to convert. After confirming, you'll be redirected to PayPal to complete payment.</p>
+
+        <form id="convertForm" onsubmit="event.preventDefault(); goToConfirm();">
+          <label for="name">Full Name</label>
+          <input id="name" name="name" type="text" placeholder="Juan dela Cruz" required />
+
+          <label for="account">Account / Reference (optional)</label>
+          <input id="account" name="account" type="text" placeholder="Your account or note" />
+
+          <label for="gcash">GCash Number</label>
+          <input id="gcash" name="gcash" type="tel" placeholder="09XXXXXXXXX" pattern="0\d{10}" required />
+          <div class="muted">Format: 09XXXXXXXXX (11 digits)</div>
+
+          <label for="amount">Amount to convert (PHP)</label>
+          <input id="amount" name="amount" type="number" step="0.01" min="1" placeholder="100.00" required />
+
+          <div style="margin-top:12px;display:flex;gap:8px;justify-content:space-between;align-items:center">
+            <button class="btn ghost" type="button" onclick="resetForm()">Reset</button>
+            <button class="btn primary" type="submit">Proceed to Confirm</button>
+          </div>
+        </form>
+
+        <div style="margin-top:14px;color:rgba(230,240,255,0.8);font-size:13px">Questions? Contact us after payment with your reference number for faster processing.</div>
+      </div>
+
+      <!-- CONFIRM VIEW -->
+      <div id="view-confirm" style="display:none">
+        <h2 style="margin-top:0">Confirm Details</h2>
+        <div class="summary" id="summaryBox">
+          <!-- fields filled by JS -->
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:10px;justify-content:space-between;align-items:center">
+          <button class="btn ghost" onclick="navigate('#/')">Edit</button>
+          <button class="btn primary" id="convertBtn">Convert Now — Go to PayPal</button>
+        </div>
+
+        <div style="margin-top:12px;color:rgba(230,240,255,0.8);font-size:13px">You will be redirected to PayPal's secure payment page. Please complete payment to enable instant GCash transfer processing.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // === IMPORTANT ===
+    // Replace the value below with your full PayPal payment link.
+    const paypalLink = 'https://www.paypal.com/ncp/payment/RJZE2WPXDYWRJ';
+    // If you have query params you want to append, you can do that programmatically here.
+
+    // Simple hash-based routing
+    function navigate(hash){
+      location.hash = hash || '#/';
+      render();
+    }
+
+    function render(){
+      const hash = location.hash.split('?')[0] || '#/';
+      document.getElementById('view-home').style.display = (hash === '#/' ? 'block' : 'none');
+      document.getElementById('view-confirm').style.display = (hash === '#/confirm' ? 'block' : 'none');
+    }
+
+    window.addEventListener('hashchange', render);
+    render();
+
+    function goToConfirm(){
+      const name = document.getElementById('name').value.trim();
+      const account = document.getElementById('account').value.trim() || '-';
+      const gcash = document.getElementById('gcash').value.trim();
+      const amount = document.getElementById('amount').value.trim();
+
+      // Basic validation
+      if(!name || !gcash || !amount){
+        alert('Please fill all required fields.');
+        return;
+      }
+      if(!/^0\d{10}$/.test(gcash)){
+        if(!confirm('GCash number does not match expected format (09XXXXXXXXX). Proceed anyway?')){
+          return;
+        }
+      }
+
+      // Populate summary
+      const summary = document.getElementById('summaryBox');
+      summary.innerHTML = `
+        <div class="field"><div><strong>Name</strong></div><div>${escapeHtml(name)}</div></div>
+        <div class="field"><div><strong>Account / Ref</strong></div><div>${escapeHtml(account)}</div></div>
+        <div class="field"><div><strong>GCash Number</strong></div><div>${escapeHtml(gcash)}</div></div>
+        <div class="field"><div><strong>Amount (PHP)</strong></div><div>₱ ${Number(amount).toFixed(2)}</div></div>
+      `;
+
+      // Save details to session storage so user can come back if needed
+      sessionStorage.setItem('kp_form', JSON.stringify({name,account,gcash,amount}));
+
+      navigate('#/confirm');
+    }
+
+    // Convert button redirects instantly to PayPal link (open in same tab)
+    document.getElementById('convertBtn').addEventListener('click', function(){
+      // Optionally, you could append information to the PayPal link as query params if your PayPal flow supports it.
+      // Example: paypalLink + '?custom=' + encodeURIComponent(JSON.stringify({name,account,gcash,amount}))
+
+      // Read saved values (if you want to attach)
+      const saved = JSON.parse(sessionStorage.getItem('kp_form') || '{}');
+
+      // If developer forgot to replace the paypalLink placeholder, warn them
+      if(paypalLink.includes('......')){
+        if(!confirm('PayPal link looks like a placeholder (contains "......"). Continue to this URL anyway?')){
+          return;
+        }
+      }
+
+      // Immediate redirect
+      window.location.href = paypalLink;
+    });
+
+    function resetForm(){
+      document.getElementById('convertForm').reset();
+      sessionStorage.removeItem('kp_form');
+    }
+
+    function escapeHtml(str){
+      return String(str).replace(/[&<>\"']/g, function(s){
+        return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"})[s];
+      });
+    }
+
+    // Load form from session if present
+    (function(){
+      const saved = JSON.parse(sessionStorage.getItem('kp_form') || 'null');
+      if(saved){
+        document.getElementById('name').value = saved.name || '';
+        document.getElementById('account').value = saved.account || '';
+        document.getElementById('gcash').value = saved.gcash || '';
+        document.getElementById('amount').value = saved.amount || '';
+      }
+    })();
+  </script>
+</body>
+</html>
